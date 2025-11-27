@@ -3,9 +3,9 @@ import pool from "../config/db.js";
 
 const router = Router();
 
-// ========================
+// ==========================
 // LISTAR VEÍCULOS
-// ========================
+// ==========================
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -23,16 +23,15 @@ router.get("/", async (req, res) => {
     `);
 
     res.json({ ok: true, veiculos: result.rows });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, msg: "Erro ao listar veículos" });
   }
 });
 
-// ========================
+// ==========================
 // CRIAR VEÍCULO
-// ========================
+// ==========================
 router.post("/", async (req, res) => {
   try {
     const { cliente_id, modelo, placa, cor, imei } = req.body;
@@ -51,9 +50,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ========================
+// ==========================
 // EDITAR VEÍCULO
-// ========================
+// ==========================
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -74,9 +73,9 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ========================
+// ==========================
 // REMOVER VEÍCULO
-// ========================
+// ==========================
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -91,21 +90,19 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// ========================
+// ==========================
 // BLOQUEAR VEÍCULO
-// ========================
+// ==========================
 router.post("/bloquear", async (req, res) => {
   try {
     const { veiculo_id, imei } = req.body;
 
-    // Registra comando
     await pool.query(
       `INSERT INTO comandos (veiculo_id, comando)
        VALUES ($1, 'BLOQUEAR')`,
       [veiculo_id]
     );
 
-    // Atualiza status
     await pool.query(
       "UPDATE veiculos SET status='bloqueado' WHERE id=$1",
       [veiculo_id]
@@ -121,21 +118,19 @@ router.post("/bloquear", async (req, res) => {
   }
 });
 
-// ========================
+// ==========================
 // DESBLOQUEAR VEÍCULO
-// ========================
+// ==========================
 router.post("/desbloquear", async (req, res) => {
   try {
     const { veiculo_id, imei } = req.body;
 
-    // Registra comando
     await pool.query(
       `INSERT INTO comandos (veiculo_id, comando)
        VALUES ($1, 'DESBLOQUEAR')`,
       [veiculo_id]
     );
 
-    // Atualiza status
     await pool.query(
       "UPDATE veiculos SET status='normal' WHERE id=$1",
       [veiculo_id]
